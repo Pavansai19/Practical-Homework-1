@@ -1,54 +1,87 @@
+# Practical Homework 1 - Decision Trees and Ensemble Models on Youth Drug Use (NSDUH 2023)
 
- Model Setup and Implementation
-We trained the following models for each task:
-Binary Classification – “Did the student skip school?”
-	Models Used:
-	•	Decision Tree
-	•	Random Forest
-	•	Bagging (with threshold tuning)
-	•	Gradient Boosting Machine (GBM)
-	Hyperparameters:
-	•	Random Forest: ntree = 500, mtry = 4
-	•	GBM: n.trees = 5000, shrinkage = 0.01, interaction.depth = 3
-	•	Bagging: mtry = number of predictors, tested thresholds: 0.3, 0.4, 0.5
-Multi-Class Classification – “How frequently does a student use marijuana?”
-	Target: Recoded MRJMDAYS into 3 classes.
-	Features: Chosen from home environment and peer influence domains only.
-	Models Used:
-	•	Decision Tree
-	•	Random Forest
-	•	GBM (multinomial distribution)
-	Class Imbalance Handling:
-	•	We applied downsampling to ensure equal representation across the three marijuana usage categories.
-	•	Also tried restricted model complexity to reduce overfitting.
-	•	Explored class weight adjustments but finally stuck with sampling.
-Regression – “How many days per year does a student consume alcohol?”
-	Target: ALCYDAYS
-	Features: Parental behavior, gender, race, income, education.
-	Models Used:
-	•	Decision Tree
-	•	Random Forest
-	•	GBM (Gaussian loss function)
-	Hyperparameter Tuning:
-	•	For RF: ntree = 350, mtry = 3
-	•	For GBM: n.trees = 3000, shrinkage = 0.01, cv.folds = 5
-Model Evaluation & Validation
-Each model was trained using a 70-30 train-test split. For evaluation:
-	Classification Models:
-	•	Confusion matrix
-	•	Accuracy, Precision, Recall, F1-Score
-	•	Class-specific sensitivity and specificity
-	Regression Models:
-	•	Mean Squared Error (MSE)
-	•	Mean Absolute Error (MAE)
-	•	Root Mean Squared Error (RMSE)
-We also generated variable importance plots to interpret which features most influenced each model.
+## Overview
+This project investigates youth behavior patterns and substance use using the NSDUH 2023 dataset. We explored three machine learning tasks using decision trees and ensemble models:
 
- 
+- **Binary Classification**: Predicting whether a youth skipped school recently
+- **Multiclass Classification**: Categorizing frequency of marijuana use
+- **Regression**: Estimating how many days a youth drank alcohol in the past year
 
-Key Refinements and Challenges
-To prevent data leakage, we carefully excluded any predictors directly related to the target.
-Downsampling was preferred over weighting due to skewed class distributions in multi-class classification.
-Threshold tuning in bagging and GBM significantly improved recall in the binary classification task.
-We encountered overfitting in early stages, which was handled by limiting model complexity and adjusting sampling.
-We monitored the OOB error vs. ntree plots to choose the optimal number of trees for ensemble methods.
+All models were implemented in **R**, with a focus on clean code, ethical modeling practices, and robust evaluation.
+
+---
+
+## Dataset
+We used the **National Survey on Drug Use and Health (NSDUH) 2023**, focusing on:
+- Youth substance use (alcohol, marijuana, tobacco)
+- Peer influence and home environment variables
+- Demographics (age, sex, race, income, education)
+
+---
+
+## Tasks & Methodology
+
+### 1. Binary Classification
+**Goal**: Can we predict if a youth skipped school recently?
+
+- **Models Used**: Decision Tree, Bagging, Random Forest, GBM
+- **Thresholding**: Custom probability threshold (0.4) for better recall
+- **Evaluation**: Accuracy, Precision, Recall, F1, Confusion Matrix Heatmaps
+- **Findings**:
+  - Bagging performed best (F1 Score: 0.766)
+  - Pruned Decision Tree underperformed
+  - Random Forest balanced performance with interpretability
+
+### 2. Multiclass Classification
+**Goal**: Can we classify marijuana use into None, Occasional, and Frequent?
+
+- **Models Used**: Decision Tree, Random Forest, GBM
+- **Class Imbalance**: Manually downsampled each class to ensure fairness
+- **Evaluation**: Class-wise F1 Scores, Macro-F1, Confusion Matrix Heatmaps
+- **Findings**:
+  - GBM performed best overall (Macro F1 Score: 0.586)
+  - Tree models had difficulty identifying the 'Frequent' class
+
+### 3. Regression
+**Goal**: Predict alcohol consumption days in the past year
+
+- **Models Used**: Decision Tree, Random Forest, GBM
+- **Evaluation**: MSE, RMSE, MAE, Actual vs Predicted Plots
+- **Findings**:
+  - All models performed similarly
+  - Random Forest had the lowest error (MAE: 1.17)
+  - Feature importance and prediction trends were visualized
+
+---
+
+## Ethical Modeling Approach
+- **Avoided data leakage** by not using target-leaking variables
+- **Handled class imbalance** via controlled downsampling
+- **Used consistent seed (`set.seed(19)`)** across all tasks for reproducibility
+- **Evaluated models beyond accuracy**, using class-specific metrics
+
+---
+
+## Deliverables
+- R script implementing all tasks and models (`PracticalHW-1_ML.R`)
+- All plots saved as PNGs (confusion matrices, F1 comparisons, regression scatter plots)
+- Final `.Rmd` 
+
+---
+
+## Results Summary
+| Task                   | Best Model     | Metric Used | Performance       |
+|------------------------|----------------|--------------|--------------------|
+| Binary Classification | Bagging        | F1 Score     | **0.766**         |
+| Multiclass Classification | GBM         | Macro F1     | **0.586**         |
+| Regression            | Random Forest  | MAE          | **1.17** days     |
+
+---
+
+## Acknowledgements
+This project was completed as part of a Machine Learning practical assignment. All work adheres to ethical data science practices and was conducted in R.
+
+
+---
+
+Feel free to explore the code and plots, and reach out with any questions!
